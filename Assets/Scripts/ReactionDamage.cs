@@ -2,18 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Token : MonoBehaviour {
+public class ReactionDamage : Reaction {
 
 	public Vector4 health;
 	public Color color;
 	private float maxHealth;
-	private MeshRenderer renderer;
+	private MeshRenderer meshRenderer;
+
+	public float delay;
+	float timer;
 
 
 	// Use this for initialization
 	void Start () {
-		renderer = GetComponent<MeshRenderer> ();
+		meshRenderer = GetComponent<MeshRenderer> ();
 		maxHealth = Mathf.Max (health.x, health.y, health.z, health.w);
+	}
+
+	public override void React(LightRay LightRay){
+		if (timer > delay) {
+			timer = 0f;
+			TakeDamage (LightRay.modifier);
+		}
 	}
 	
 	// Update is called once per frame
@@ -38,11 +48,12 @@ public class Token : MonoBehaviour {
 			Normalise(health.w, maxHealth));
 		
 		color = (Color)temp;
-		renderer.material.color = color;
+		meshRenderer.material.color = color;
 	}
 
+
 	void Update(){
-		TakeDamage (new Vector4(0f,1f,0f,0f));
+		timer += Time.deltaTime;
 	}
 
 	float Normalise(float x, float max){
