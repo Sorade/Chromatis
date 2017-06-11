@@ -11,7 +11,7 @@ public class ReactionPassRay : Reaction {
 	public float range = 100f;                      // The distance the gun can fire.
 
 	Ray shootRay = new Ray() ;                                   // A ray from the gun end forwards.
-	RaycastHit shootHit;                            // A raycast hit to get information about what was hit.
+	RaycastHit shootHit = new RaycastHit();                            // A raycast hit to get information about what was hit.
 	int shootableMask;                              // A layer mask so the raycast only hits things on the shootable layer.
 	//ParticleSystem gunParticles;                    // Reference to the particle system.
 	LineRenderer gunLine;                           // Reference to the line renderer.
@@ -19,6 +19,10 @@ public class ReactionPassRay : Reaction {
 	//Light gunLight;                                 // Reference to the light component.
 	float effectsDisplayTime = 0.2f;                // The proportion of the timeBetweenBullets that the effects will display for.
 	int bounces;
+
+	float timer;
+	float timeSinceHit;
+	bool reacting;
 
 	void Awake ()
 	{
@@ -39,11 +43,12 @@ public class ReactionPassRay : Reaction {
 	void Update ()
 	{
 		// If the timer has exceeded the proportion of timeBetweenBullets that the effects should be displayed for...
-		if(!Input.GetButton("Fire1"))
+		if(!reacting)
 		{
 			// ... disable the effects.
 			DisableEffects ();
 		}
+		reacting = false;
 	}
 
 	public void DisableEffects ()
@@ -55,11 +60,13 @@ public class ReactionPassRay : Reaction {
 	
 	void PassOnRay (LightRay lightRay)
 	{
-		bounces++;
-		if (bounces > 20) {
+		reacting = true;
+
+		if (bounces > 0) {
 			bounces = 0;
 			return;
 		}
+		bounces++;
 		// Play the gun shot audioclip.
 		//gunAudio.Play ();
 
@@ -73,7 +80,8 @@ public class ReactionPassRay : Reaction {
 		// Enable the line renderer and set it's first position to be the end of the gun.
 		gunLine.enabled = true;
 		gunLine.SetPosition (0, lightRay.hit.point);
-		gunLine.material.color = color;
+		gunLine.material.color = Color.black;
+		gunLine.material.color = lightRay.color + color;
 		gunLine.startWidth = 0.1f;
 
 		// Set the shootRay so that it starts at the end of the gun and points forward from the barrel.
@@ -89,7 +97,7 @@ public class ReactionPassRay : Reaction {
 			if(reactions != null)
 			{
 				lightRay.hit = shootHit;
-				lightRay.color = color;
+				lightRay.color += color;
 				lightRay.UpdateModifier ();
 				// ... the target should trigger all its reactions
 				for (int i = 0; i < reactions.Length; i++) {					

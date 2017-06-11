@@ -31,4 +31,9 @@ public class LightRay : ScriptableObject {
 		color -= other;
 		UpdateModifier ();
 	}
+
+	public void SetColor (Color other){
+		color = other;
+		UpdateModifier ();
+	}
 }

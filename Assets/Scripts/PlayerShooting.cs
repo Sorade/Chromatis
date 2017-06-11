@@ -10,7 +10,7 @@ public class PlayerShooting : MonoBehaviour
 
 	LightRay lightRay;
 	Ray shootRay = new Ray();                                   // A ray from the gun end forwards.
-	RaycastHit shootHit;                            // A raycast hit to get information about what was hit.
+	RaycastHit shootHit = new RaycastHit();                            // A raycast hit to get information about what was hit.
 	int shootableMask;                              // A layer mask so the raycast only hits things on the shootable layer.
 	//ParticleSystem gunParticles;                    // Reference to the particle system.
 	LineRenderer gunLine;                           // Reference to the line renderer.
@@ -30,8 +30,7 @@ public class PlayerShooting : MonoBehaviour
 		//gunLight = GetComponent<Light> ();
 
 		lightRay = ScriptableObject.CreateInstance<LightRay>() as LightRay;
-		lightRay.color = rayColor;
-		lightRay.UpdateModifier ();
+		lightRay.SetColor(rayColor);
 	}
 
 	void Update ()
@@ -77,6 +76,7 @@ public class PlayerShooting : MonoBehaviour
 		gunLine.startWidth = 0.1f;
 
 		// Set the shootRay so that it starts at the end of the gun and points forward from the barrel.
+		lightRay.SetColor(rayColor);
 		shootRay.origin = transform.position;
 		shootRay.direction = transform.forward;
 

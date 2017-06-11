@@ -6,10 +6,13 @@ public class ReactionDamage : Reaction {
 
 	public Vector4 health;
 	public Color color;
+	public float delay;
+	public GameObject deathVFX;
+
 	private float maxHealth;
 	private MeshRenderer meshRenderer;
 
-	public float delay;
+
 	float timer;
 
 
@@ -37,6 +40,10 @@ public class ReactionDamage : Reaction {
 				Mathf.Max (health.w, 0f));
 		}
 		UpdateColor ();
+
+		if ((health.x + health.y + health.z) <= 0f) {
+			Death();
+		}
 	}
 
 	void UpdateColor(){
@@ -69,5 +76,10 @@ public class ReactionDamage : Reaction {
 		{
 			return x / max;
 		}
+	}
+
+	void Death(){
+		Instantiate (deathVFX, transform.position, Quaternion.identity);
+		Destroy (gameObject);
 	}
 }
