@@ -89,7 +89,7 @@ public class PlayerShooting : MonoBehaviour
 			if(reactions != null)
 			{
 				lightRay.hit = shootHit;
-				lightRay.ray = shootRay;
+				lightRay.CopyRay(shootRay);
 				// ... the target should trigger all its reactions
 				for (int i = 0; i < reactions.Length; i++) {					
 					reactions [i].React (lightRay);

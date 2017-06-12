@@ -15,6 +15,11 @@ public class LightRay : ScriptableObject {
 		
 	}
 
+	public void CopyRay(Ray newRay){
+		ray.origin = newRay.origin;
+		ray.direction = newRay.direction;
+	}
+
 	public void UpdateModifier () {
 		Vector4 newMod = (Vector4)color;
 		newMod.Normalize ();

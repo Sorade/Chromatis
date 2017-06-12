@@ -40,7 +40,7 @@ public class ReactionPassRay : Reaction {
 		PassOnRay (lightRay);
 	}
 
-	void Update ()
+	void LateUpdate ()
 	{
 		// If the timer has exceeded the proportion of timeBetweenBullets that the effects should be displayed for...
 		if(!reacting)
@@ -49,6 +49,7 @@ public class ReactionPassRay : Reaction {
 			DisableEffects ();
 		}
 		reacting = false;
+		bounces = 0;
 	}
 
 	public void DisableEffects ()
@@ -62,8 +63,7 @@ public class ReactionPassRay : Reaction {
 	{
 		reacting = true;
 
-		if (bounces > 0) {
-			bounces = 0;
+		if (bounces > 4) {
 			return;
 		}
 		bounces++;
@@ -80,7 +80,6 @@ public class ReactionPassRay : Reaction {
 		// Enable the line renderer and set it's first position to be the end of the gun.
 		gunLine.enabled = true;
 		gunLine.SetPosition (0, lightRay.hit.point);
-		gunLine.SetPosition(0, lightRay.hit.point + lightRay.ray.direction.normalized); //to remove
 		//gunLine.SetColors (Color.blue, Color.blue);
 		//gunLine.material = new Material (Shader.Find ("Unlit/Texture"));
 		gunLine.material.color = lightRay.color + color;
@@ -88,13 +87,15 @@ public class ReactionPassRay : Reaction {
 		gunLine.startWidth = 0.1f;
 
 		// Set the shootRay so that it starts at the end of the gun and points forward from the barrel.
-		shootRay.origin = lightRay.hit.point + lightRay.ray.direction.normalized;
+		shootRay.origin = lightRay.hit.point;
 		shootRay.direction = lightRay.ray.direction;
 		lightRay.AddColor (color);
 
+		gameObject.GetComponent<Collider>().enabled = false;
 		// Perform the raycast against gameobjects on the shootable layer and if it hits something...
 		if(Physics.Raycast (shootRay, out shootHit, range, shootableMask))
 		{
+			gameObject.GetComponent<Collider>().enabled = true;
 			// Try and find an EnemyHealth script on the gameobject hit.
 			Reaction[] reactions = shootHit.collider.GetComponents<Reaction> ();
 			// If the EnemyHealth component exist...
@@ -113,6 +114,7 @@ public class ReactionPassRay : Reaction {
 		// If the raycast didn't hit anything on the shootable layer...
 		else
 		{
+			gameObject.GetComponent<Collider>().enabled = true;
 			// ... set the second position of the line renderer to the fullest extent of the gun's range.
 			gunLine.SetPosition (1, shootRay.origin + shootRay.direction * range);
 		}
