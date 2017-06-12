@@ -80,13 +80,17 @@ public class ReactionPassRay : Reaction {
 		// Enable the line renderer and set it's first position to be the end of the gun.
 		gunLine.enabled = true;
 		gunLine.SetPosition (0, lightRay.hit.point);
-		gunLine.material.color = Color.black;
+		gunLine.SetPosition(0, lightRay.hit.point + lightRay.ray.direction.normalized); //to remove
+		//gunLine.SetColors (Color.blue, Color.blue);
+		//gunLine.material = new Material (Shader.Find ("Unlit/Texture"));
 		gunLine.material.color = lightRay.color + color;
+
 		gunLine.startWidth = 0.1f;
 
 		// Set the shootRay so that it starts at the end of the gun and points forward from the barrel.
-		shootRay.origin = lightRay.hit.point;
+		shootRay.origin = lightRay.hit.point + lightRay.ray.direction.normalized;
 		shootRay.direction = lightRay.ray.direction;
+		lightRay.AddColor (color);
 
 		// Perform the raycast against gameobjects on the shootable layer and if it hits something...
 		if(Physics.Raycast (shootRay, out shootHit, range, shootableMask))
@@ -97,8 +101,6 @@ public class ReactionPassRay : Reaction {
 			if(reactions != null)
 			{
 				lightRay.hit = shootHit;
-				lightRay.color += color;
-				lightRay.UpdateModifier ();
 				// ... the target should trigger all its reactions
 				for (int i = 0; i < reactions.Length; i++) {					
 					reactions [i].React (lightRay);
