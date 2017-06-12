@@ -20,6 +20,7 @@ public class ReactionDamage : Reaction {
 	void Start () {
 		meshRenderer = GetComponent<MeshRenderer> ();
 		maxHealth = Mathf.Max (health.x, health.y, health.z, health.w);
+		UpdateColor ();
 	}
 
 	public override void React(LightRay LightRay){
@@ -46,7 +47,7 @@ public class ReactionDamage : Reaction {
 		}
 	}
 
-	void UpdateColor(){
+	public void UpdateColor(){
 
 		Vector4 temp = new Vector4 (
 			Normalise(health.x, maxHealth), 
